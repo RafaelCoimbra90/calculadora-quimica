@@ -18,10 +18,15 @@ def carregar_e_tratar_dados():
         return None
         
     # LÊ A PLANILHA
-    base_de_dado = pd.read_excel(NOME_ARQUIVO)
-    
-    # TRATAMENTO DE ZEROS
-    base_de_dado.fillna(0, inplace=True)
+base_de_dado = pd.read_excel(NOME_ARQUIVO)
+
+# TRATAMENTO DE ZEROS SEGURO PARA TODOS OS FORMATOS DE TEXTO E PREÇO
+for coluna in base_de_dado.columns:
+    if base_de_dado[coluna].dtype == 'object' or str(base_de_dado[coluna].dtype).startswith('string'):
+        base_de_dado[coluna] = base_de_dado[coluna].fillna("")
+    else:
+        base_de_dado[coluna] = base_de_dado[coluna].fillna(0.0)
+
     
     df_limpo = base_de_dado.copy()
     
