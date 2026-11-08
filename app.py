@@ -8,7 +8,7 @@ st.set_page_config(page_title="Calculadora de Orçamentos", page_icon="🧪", la
 st.title("🧪 Calculadora de Orçamentos Químicos")
 st.write("Selecione os produtos, confira as marcas e monte o preço final:")
 
-# Garanta que sua planilha no GitHub tenha exatamente este mesmo nome:
+# O arquivo de dados que deve ficar junto com o script do site na mesma pasta
 NOME_ARQUIVO = "TABELA PRODUTOS QUÍMICOS.xlsx"
 
 @st.cache_data
@@ -18,15 +18,14 @@ def carregar_e_tratar_dados():
         return None
         
     # LÊ A PLANILHA
-base_de_dado = pd.read_excel(NOME_ARQUIVO)
-
-# TRATAMENTO DE ZEROS SEGURO PARA TODOS OS FORMATOS DE TEXTO E PREÇO
-for coluna in base_de_dado.columns:
-    if base_de_dado[coluna].dtype == 'object' or str(base_de_dado[coluna].dtype).startswith('string'):
-        base_de_dado[coluna] = base_de_dado[coluna].fillna("")
-    else:
-        base_de_dado[coluna] = base_de_dado[coluna].fillna(0.0)
-
+    base_de_dado = pd.read_excel(NOME_ARQUIVO)
+    
+    # TRATAMENTO DE VALORES NULOS SEGURO (Substitui fillna antigo)
+    for coluna in base_de_dado.columns:
+        if base_de_dado[coluna].dtype == 'object' or str(base_de_dado[coluna].dtype).startswith('string'):
+            base_de_dado[coluna] = base_de_dado[coluna].fillna("")
+        else:
+            base_de_dado[coluna] = base_de_dado[coluna].fillna(0.0)
     
     df_limpo = base_de_dado.copy()
     
@@ -119,7 +118,7 @@ if df_limpo is not None:
         with col_btn2:
             if st.button("🗑️ Limpar Tudo", use_container_width=True):
                 st.session_state.carrinho = []
-                st.rerun()  # CORRIGIDO DE: st.render()
+                st.rerun()
 
     st.divider()
 
